@@ -8,14 +8,14 @@ namespace FitnessCenterManagementSystem.Models
 
         [Required, StringLength(100)]
         public string Name { get; set; }
-
-        public string Address { get; set; }
-        public string OpeningHours { get; set; }
+        [StringLength(200)]
+        public string? Address { get; set; }
+        public string? OpeningHours { get; set; }
 
         //public string ContactInfo { get; set; }
 
-        public ICollection<Service> Services { get; set; }
-        public ICollection<Trainer> Trainers { get; set; }
+        public ICollection<Service> Services { get; set; } = new List<Service>();
+        public ICollection<Trainer> Trainers { get; set; } = new List<Trainer>();
 
 
     }

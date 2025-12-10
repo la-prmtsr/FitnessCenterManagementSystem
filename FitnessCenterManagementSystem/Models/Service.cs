@@ -6,11 +6,13 @@ namespace FitnessCenterManagementSystem.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        public string ServiceName { get; set; }
-        public string Description { get; set; }
-        public int DurationInMinutes { get; set; }
-        public decimal Price { get; set; }
+        [Required, StringLength(100)]
+        public string? ServiceName { get; set; }
+        [StringLength(1000)]
+        public string? Description { get; set; }
+        
+        public int ?DurationInMinutes { get; set; }
+        public decimal ?Price { get; set; }
         public int FitnessCenterId { get; set; }
         public FitnessCenter FitnessCenter { get; set; }
     }
