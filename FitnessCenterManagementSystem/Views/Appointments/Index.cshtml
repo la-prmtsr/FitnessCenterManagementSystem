@@ -1,0 +1,126 @@
+﻿@model IEnumerable<FitnessCenterManagementSystem.Models.Appointment>
+
+
+@{
+    ViewData["Title"] = "Randevularım";
+    bool isAdmin = User.IsInRole("Admin");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>@(isAdmin ? "Tüm Randevular (Yönetici)" : "Randevularım")</h1>
+
+    @if (!isAdmin)
+    {
+        <a asp-action="Create" class="btn btn-primary btn-lg">➕ Yeni Randevu Al</a>
+    }
+</div>
+
+<table class="table table-hover align-middle shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Tarih & Saat</th>
+            <th>Durum</th>
+            <th>Hizmet</th>
+            <th>Antrenör</th>
+            @if (isAdmin)
+            {
+                <th>Üye (Email)</th>
+            }
+            <th class="text-center">İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            // --- MANTIK HESAPLAMALARI ---
+            TimeSpan fark = item.AppointmentDate - DateTime.Now;
+            double saatFarki = fark.TotalHours;
+
+            // 1. Randevu geçmişte mi kalmış?
+            bool isPast = fark.TotalSeconds < 0;
+
+            // 2. Kritik durum kontrolü (Sadece GELECEK randevular için geçerli)
+            bool onayGerekliMi = (!isPast && saatFarki > 0 && saatFarki <= 12 && item.Status != "Kesinleşti");
+
+            // 3. Satır Rengi Belirleme
+            string satirClass = "";
+            if (isPast)
+            {
+                satirClass = "table-secondary text-muted"; // Geçmişse GRİ ve SOLUK yap
+            }
+            else if (onayGerekliMi)
+            {
+                satirClass = "table-warning border-warning"; // Acilse SARI yap
+            }
+            // ----------------------------
+
+            <tr class="@satirClass">
+                <td>
+                    <div class="fw-bold">@item.AppointmentDate.ToString("dd.MM.yyyy")</div>
+                    <div>@item.AppointmentDate.ToString("HH:mm")</div>
+
+                    @if (onayGerekliMi)
+                    {
+                        <div class="mt-2 text-danger fw-bold small animate__animated animate__flash">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            @(isAdmin ? "Üye henüz onaylamadı!" : "Son 12 Saat! Durum bildiriniz.")
+                        </div>
+                    }
+                </td>
+                <td>
+                    @if (isPast)
+                    {
+                        <span class="badge bg-secondary p-2">Geçmiş / Tamamlandı</span>
+                    }
+                    else if (item.Status == "Kesinleşti")
+                    {
+                        <span class="badge bg-success p-2">✅ Kesinleşti</span>
+                    }
+                    else if (onayGerekliMi)
+                    {
+                        <span class="badge bg-warning text-dark p-2">⚠️ Yanıt Bekleniyor</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-info text-dark p-2">@item.Status</span>
+                    }
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Service.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Trainer.FullName)</td>
+
+                @if (isAdmin)
+                {
+                    <td>@Html.DisplayFor(modelItem => item.Member.UserName)</td>
+                }
+
+                <td class="text-center">
+                    @if (isPast)
+                    {
+                        <span class="small fst-italic me-2">Arsivlendi</span>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm">Detay</a>
+                    }
+                    else if (onayGerekliMi && !isAdmin)
+                    {
+                        <span class="d-block mb-1 fw-bold text-muted small">Gidecek misiniz?</span>
+                        <div class="btn-group" role="group">
+                            <form asp-action="ConfirmAttendance" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-success btn-sm">✅ Evet</button>
+                            </form>
+                            <form asp-action="CancelAttendance" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm ms-1">❌ Hayır</button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm">Detay</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">İptal</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

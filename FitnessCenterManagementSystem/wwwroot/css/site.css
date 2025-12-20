@@ -1,22 +1,153 @@
-html {
-  font-size: 14px;
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
+/* --- MODERN SOFT UI TEMASI --- */
+
+/* 1. Modern Font (Inter) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Renk Paleti (Modern Blue & Fresh Mint) */
+    --primary-color: #3b82f6; /* Canl? ama yumu?ak bir mavi */
+    --primary-hover: #2563eb; /* Hover rengi */
+    --accent-color: #10b981; /* Onay/Ba?ar? için yumu?ak ye?il */
+    --text-dark: #1f2937; /* Simsiyah de?il, koyu antrasit (Gözü yormaz) */
+    --text-muted: #6b7280; /* Gri yaz?lar */
+    --bg-body: #f3f4f6; /* Çok aç?k gri arka plan */
+    --bg-white: #ffffff;
+    --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); /* Sihirli Yumu?ak Gölge */
+    --radius: 12px; /* Kö?e yuvarlama standard? */
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* --- GENEL AYARLAR --- */
 body {
-  margin-bottom: 60px;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-dark);
+    line-height: 1.6;
 }
+
+a {
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+/* --- KART TASARIMI (En Önemli K?s?m) --- */
+.card {
+    background-color: var(--bg-white);
+    border: 1px solid rgba(0,0,0,0.04); /* Neredeyse görünmez s?n?r */
+    border-radius: 16px; /* Daha oval */
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card:hover {
+        transform: translateY(-4px); /* Hafif yukar? kalkma */
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* --- BUTONLAR --- */
+.btn {
+    border-radius: 50px; /* Hap ?eklinde butonlar (Pill Shape) */
+    padding: 10px 28px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); /* Mavi gölge */
+}
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
+    }
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+/* --- FORM ELEMANLARI --- */
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    padding: 12px 16px;
+    background-color: #f9fafb;
+    transition: all 0.2s;
+}
+
+    .form-control:focus, .form-select:focus {
+        background-color: #fff;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); /* Yumu?ak mavi hare */
+    }
+
+/* --- NAVBAR (Modern Beyaz) --- */
+.navbar {
+    background-color: rgba(255, 255, 255, 0.9); /* Hafif ?effaf */
+    backdrop-filter: blur(10px); /* Buzlu cam efekti */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.nav-link {
+    color: var(--text-dark) !important;
+    font-weight: 500;
+}
+
+    .nav-link:hover {
+        color: var(--primary-color) !important;
+    }
+
+/* --- TABLO TASARIMI --- */
+.table {
+    border-collapse: separate;
+    border-spacing: 0 8px; /* Sat?rlar aras? bo?luk */
+}
+
+    .table thead th {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        border: none;
+        padding-bottom: 1rem;
+    }
+
+    .table tbody tr {
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        border-radius: 8px;
+    }
+
+    .table td {
+        border: none;
+        padding: 16px;
+        vertical-align: middle;
+    }
+
+        /* Sat?rlar?n kenarlar?n? yuvarla */
+        .table td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .table td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }

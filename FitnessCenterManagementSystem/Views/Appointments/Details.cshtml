@@ -1,0 +1,40 @@
+﻿@model FitnessCenterManagementSystem.Models.Appointment
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-primary text-white text-center">
+            <h3>📅 Randevu Detayları</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3 border-bottom pb-2">
+                <div class="col-sm-4 fw-bold text-muted">Tarih:</div>
+                <div class="col-sm-8 fs-5">@Model.AppointmentDate.ToString("dd MMMM yyyy")</div>
+            </div>
+            <div class="row mb-3 border-bottom pb-2">
+                <div class="col-sm-4 fw-bold text-muted">Saat:</div>
+                <div class="col-sm-8 fs-5">@Model.AppointmentDate.ToString("HH:mm")</div>
+            </div>
+            <div class="row mb-3 border-bottom pb-2">
+                <div class="col-sm-4 fw-bold text-muted">Hizmet:</div>
+                <div class="col-sm-8">@Html.DisplayFor(model => model.Service.Name)</div>
+            </div>
+            <div class="row mb-3 border-bottom pb-2">
+                <div class="col-sm-4 fw-bold text-muted">Antrenör:</div>
+                <div class="col-sm-8">@Html.DisplayFor(model => model.Trainer.FullName)</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-4 fw-bold text-muted">Durum:</div>
+                <div class="col-sm-8">
+                    <span class="badge bg-info text-dark fs-6">@Model.Status</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Index" class="btn btn-secondary">🔙 Listeye Dön</a>
+        </div>
+    </div>
+</div>

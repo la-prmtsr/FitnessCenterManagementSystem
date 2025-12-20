@@ -6,14 +6,19 @@ namespace FitnessCenterManagementSystem.Models
     {
         public int Id { get; set; }
 
-        [Required, StringLength(100)]
-        public string? ServiceName { get; set; }
-        [StringLength(1000)]
-        public string? Description { get; set; }
-        
-        public int ?DurationInMinutes { get; set; }
-        public decimal ?Price { get; set; }
-        public int FitnessCenterId { get; set; }
-        public FitnessCenter FitnessCenter { get; set; }
+        [Required]
+        [Display(Name = "Program Name")]
+        public string Name { get; set; } // Orn: Yoga, Fitness
+
+        [Display(Name = "Description")]
+        public string Description { get; set; }
+
+        [Required]
+        [Display(Name = "Duration")]
+        public int DurationMinutes { get; set; } // Orn: 60 minutes
+
+        [Required]
+        [Display(Name = "Price (TL)")]
+        public decimal Price { get; set; }
     }
 }

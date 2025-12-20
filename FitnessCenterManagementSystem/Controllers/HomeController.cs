@@ -1,4 +1,4 @@
-using FitnessCenterManagementSystem.Models;
+﻿using FitnessCenterManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -13,8 +13,16 @@ namespace FitnessCenterManagementSystem.Controllers
             _logger = logger;
         }
 
+
         public IActionResult Index()
         {
+            // Eğer giren kişi Admin ise, direkt Dashboard'a yönlendir
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
+            // Değilse normal anasayfayı görsün
             return View();
         }
 
