@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace FitnessCenterManagementSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
-
     public class TrainersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,25 +24,22 @@ namespace FitnessCenterManagementSystem.Controllers
         // GET: Trainers
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Trainers.Include(t => t.FitnessCenter);
-            return View(await applicationDbContext.ToListAsync());
+            // Include(t => t.Service) ekleyerek Service tablosunu da çekiyoruz
+            var trainers = _context.Trainers.Include(t => t.Service);
+            return View(await trainers.ToListAsync());
         }
 
         // GET: Trainers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
+            // Include(t => t.Service) EKLENDİ!
             var trainer = await _context.Trainers
-                .Include(t => t.FitnessCenter)
+                .Include(t => t.Service)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (trainer == null)
-            {
-                return NotFound();
-            }
+
+            if (trainer == null) return NotFound();
 
             return View(trainer);
         }
@@ -51,7 +47,8 @@ namespace FitnessCenterManagementSystem.Controllers
         // GET: Trainers/Create
         public IActionResult Create()
         {
-            ViewData["FitnessCenterId"] = new SelectList(_context.FitnessCenters, "Id", "Name");
+            // Hizmetleri Dropdown icin sayfaya gonderiyoruz
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Name");
             return View();
         }
 
@@ -60,7 +57,7 @@ namespace FitnessCenterManagementSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Bio,Specialities,FitnessCenterId")] Trainer trainer)
+        public async Task<IActionResult> Create([Bind("Id,FullName,Expertise,WorkingDays,StartTime,EndTime,ServiceId")] Trainer trainer)
         {
             if (ModelState.IsValid)
             {
@@ -68,7 +65,8 @@ namespace FitnessCenterManagementSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FitnessCenterId"] = new SelectList(_context.FitnessCenters, "Id", "Name", trainer.FitnessCenterId);
+            // Hata varsa listeyi tekrar gonder
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Name", trainer.ServiceId);
             return View(trainer);
         }
 
@@ -85,16 +83,18 @@ namespace FitnessCenterManagementSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["FitnessCenterId"] = new SelectList(_context.FitnessCenters, "Id", "Name", trainer.FitnessCenterId);
+            // DROP-DOWN DOLDURMA 
+            // Bu sayede sayfa acildiginda hocanin mevcut hizmeti secili gelir.
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Name", trainer.ServiceId);
+
             return View(trainer);
         }
 
         // POST: Trainers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Bio,Specialities,FitnessCenterId")] Trainer trainer)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Expertise,WorkingDays,StartTime,EndTime,ServiceId")] Trainer trainer)
         {
             if (id != trainer.Id)
             {
@@ -121,25 +121,23 @@ namespace FitnessCenterManagementSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FitnessCenterId"] = new SelectList(_context.FitnessCenters, "Id", "Name", trainer.FitnessCenterId);
+
+            // Hata varsa listeyi tekrar doldur (Kaybolmasin diye)
+            ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Name", trainer.ServiceId);
             return View(trainer);
         }
 
         // GET: Trainers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
+            // Include(t => t.Service) EKLENDİ!
             var trainer = await _context.Trainers
-                .Include(t => t.FitnessCenter)
+                .Include(t => t.Service)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (trainer == null)
-            {
-                return NotFound();
-            }
+
+            if (trainer == null) return NotFound();
 
             return View(trainer);
         }
@@ -149,16 +147,36 @@ namespace FitnessCenterManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var trainer = await _context.Trainers.FindAsync(id);
-            if (trainer != null)
+            // ESKİSİ: var trainer = await _context.Trainers.FindAsync(id);
+            // YENİSİ: Include ekleyerek çekiyoruz ki hata verirse Hizmet adı kaybolmasın.
+            var trainer = await _context.Trainers
+                .Include(t => t.Service) // <-- BU SATIR EKSİKTİ
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (trainer == null)
             {
-                _context.Trainers.Remove(trainer);
+                return NotFound();
             }
 
+            // --- RANDEVU KONTROLÜ ---
+            bool hasFutureAppointments = await _context.Appointments
+                .AnyAsync(a => a.TrainerId == id && a.AppointmentDate >= DateTime.Now);
+
+            if (hasFutureAppointments)
+            {
+                // Hata mesajı gönder
+                ViewBag.Error = "DİKKAT: Bu antrenörün bekleyen randevuları var! Önce randevuları iptal etmelisiniz.";
+
+                // Artık 'trainer' değişkeninin içinde Service bilgisi dolu olduğu için
+                // sayfaya geri döndüğümüzde Hizmet adı yazacak.
+                return View("Delete", trainer);
+            }
+            // ------------------------
+
+            _context.Trainers.Remove(trainer);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool TrainerExists(int id)
         {
             return _context.Trainers.Any(e => e.Id == id);

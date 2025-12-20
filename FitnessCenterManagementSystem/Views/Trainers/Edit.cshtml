@@ -1,0 +1,97 @@
+﻿@model FitnessCenterManagementSystem.Models.Trainer
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Düzenle</h1>
+<h4>Antrenör</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" id="editTrainerForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group mb-3">
+                <label asp-for="FullName" class="control-label">Ad Soyad</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ServiceId" class="control-label">Hizmet Alanı</label>
+                <select asp-for="ServiceId" class="form-control" asp-items="ViewBag.ServiceId"></select>
+                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="control-label fw-bold">Çalışma Günleri</label>
+                <div class="card p-2 bg-light">
+                    @{
+                        string currentDays = Model?.WorkingDays ?? "";
+                        string[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                    }
+                    <div class="row">
+                        @foreach (var day in days)
+                        {
+                            bool isChecked = currentDays.Contains(day);
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input day-checkbox" type="checkbox" value="@day" @(isChecked ? "checked" : "")>
+                                    <label class="form-check-label">@day</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <input type="hidden" asp-for="WorkingDays" id="FinalWorkingDays" />
+                <span asp-validation-for="WorkingDays" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Expertise" class="control-label">Hakkında</label>
+                <input asp-for="Expertise" class="form-control" />
+                <span asp-validation-for="Expertise" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="StartTime" class="control-label">Başlangıç</label>
+                    <input asp-for="StartTime" class="form-control" type="time" />
+                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EndTime" class="control-label">Bitiş</label>
+                    <input asp-for="EndTime" class="form-control" type="time" />
+                    <span asp-validation-for="EndTime" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Kaydet" class="btn btn-primary w-100" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index">Listeye Dön</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Sadece bu formu dinle
+        document.getElementById("editTrainerForm").addEventListener("submit", function () {
+            var selected = [];
+            document.querySelectorAll(".day-checkbox:checked").forEach(function (box) {
+                selected.push(box.value);
+            });
+            document.getElementById("FinalWorkingDays").value = selected.join(",");
+        });
+    </script>
+}

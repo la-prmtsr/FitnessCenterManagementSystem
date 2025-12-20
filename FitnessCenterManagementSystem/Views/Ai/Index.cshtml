@@ -1,0 +1,190 @@
+﻿@{
+    ViewData["Title"] = "AI Fitness Koçu";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">🤖 AI Fitness Center</h1>
+        <p class="lead text-muted">Gerçek Yapay Zeka Destekli Kişisel Koçunuz</p>
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100 border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0">📝 Kişisel Program Hazırla</h5>
+                </div>
+                <div class="card-body">
+                    <form id="textForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Cinsiyet</label>
+                            <select id="gender" class="form-select">
+                                <option value="Erkek">Erkek</option>
+                                <option value="Kadın">Kadın</option>
+                            </select>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-bold">Yaş</label>
+                                <input type="number" id="age" class="form-control" value="23" required>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-bold">Kilo (kg)</label>
+                                <input type="number" id="weight" class="form-control" value="75" required>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-bold">Boy (cm)</label>
+                                <input type="number" id="height" class="form-control" value="180" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Hedefin</label>
+                            <select id="goal" class="form-select">
+                                <option value="Kilo Vermek ve Yağ Yakmak">Kilo Vermek (Yağ Yakımı)</option>
+                                <option value="Kas Kütlesi Kazanmak (Hipertrofi)">Kas Yapmak (Hacim)</option>
+                                <option value="Kilo Almak (Bulk)">Kilo Almak (Bulk)</option>
+                                <option value="Fit ve Atletik Olmak">Fit ve Atletik Kalmak</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <span id="loadingText" style="display:none;">⏳ Google AI Düşünüyor...</span>
+                            <span id="btnText">Programı Oluştur (Gerçek AI)</span>
+                        </button>
+                    </form>
+
+                    <div id="aiResult" class="mt-3 p-3 bg-light rounded small border" style="display:none; max-height:500px; overflow-y:auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100 border-0">
+                <div class="card-header bg-success text-white py-3">
+                    <h5 class="mb-0">📸 Hedef Vücut Simülasyonu</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="text-muted small">Fotoğrafını yükle, hedefini seç, yapay zeka (Gemini Vision) seni analiz etsin ve çizsin.</p>
+
+                    <form id="photoForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <input type="file" name="photo" class="form-control" accept="image/*" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <select name="targetGoal" class="form-select">
+                                <option value="muscle">🏋️‍♂️ Fit & Kaslı (Athletic)</option>
+                                <option value="bulk">🍔 İri & Hacimli (Bulky)</option>
+                                <option value="cut">🏃‍♂️ Define & Parçalı (Shredded)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100" id="btnTransform">
+                            🚀 Dönüşümü Başlat (Gerçek AI)
+                        </button>
+                    </form>
+
+                    <div id="loadingArea" style="display:none;" class="mt-4">
+                        <div class="spinner-grow text-success" role="status"></div>
+                        <p class="mt-2 small">Google fotoğrafı analiz ediyor...</p>
+                    </div>
+
+                    <div id="imageResultArea" class="mt-3" style="display:none;">
+                        <h6 class="text-success">Yapay Zeka Sonucu:</h6>
+                        <img id="finalImage" src="" class="img-fluid rounded shadow border border-2 border-success" style="max-height: 350px;" />
+                        <div class="alert alert-secondary mt-2 small p-2 text-start" style="max-height: 100px; overflow-y:auto;">
+                            <strong>Gemini Analizi (Prompt):</strong> <span id="promptText" class="fst-italic"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 1. METİN OLUŞTURMA (GERÇEK HATA GÖSTERİMİ)
+        $("#textForm").submit(function (e) {
+            e.preventDefault();
+            $("#btnText").hide();
+            $("#loadingText").show();
+            $("#aiResult").hide().removeClass("alert alert-danger");
+
+            $.ajax({
+                url: '/Ai/GetAdvice',
+                type: 'POST',
+                data: {
+                    age: $("#age").val(),
+                    weight: $("#weight").val(),
+                    height: $("#height").val(),
+                    goal: $("#goal").val(),
+                    gender: $("#gender").val() // Cinsiyet eklendi
+                },
+                success: function (response) {
+                    $("#btnText").show();
+                    $("#loadingText").hide();
+
+                    if (response.success) {
+                        // BAŞARILI: Gerçek cevabı göster
+                        $("#aiResult").html(response.message).fadeIn();
+                    } else {
+                        // HATA: Gerçek hatayı kırmızı kutuda göster
+                        $("#aiResult").addClass("alert alert-danger").html("<strong>⚠️ HATA OLUŞTU:</strong><br>" + response.message).fadeIn();
+                    }
+                },
+                error: function (xhr) {
+                    $("#btnText").show();
+                    $("#loadingText").hide();
+                    $("#aiResult").addClass("alert alert-danger").html("<strong>⚠️ SİSTEM HATASI:</strong> Sunucuya ulaşılamadı (HTTP " + xhr.status + ").").fadeIn();
+                }
+            });
+        });
+
+        // 2. RESİM OLUŞTURMA (DEĞİŞMEDİ AMA HATA GÖSTERECEK)
+        $("#photoForm").submit(function (e) {
+            e.preventDefault();
+            $("#btnTransform").prop("disabled", true);
+            $("#imageResultArea").hide();
+            $("#loadingArea").show();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/Ai/AnalyzeAndTransform',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#loadingArea").hide();
+                    $("#btnTransform").prop("disabled", false);
+
+                    if (response.success) {
+                        var aiPrompt = response.prompt;
+                        var safePrompt = encodeURIComponent(aiPrompt + ", realistic, 8k, cinematic lighting, detailed texture");
+                        var seed = Math.floor(Math.random() * 1000);
+                        var imageUrl = `https://pollinations.ai/p/${safePrompt}?width=512&height=512&seed=${seed}&model=flux-realism`;
+
+                        $("#finalImage").attr("src", imageUrl);
+                        $("#promptText").text(aiPrompt);
+                        $("#imageResultArea").fadeIn();
+
+                    } else {
+                        // Hatayı ekrana bas
+                        alert("HATA:\n" + response.message);
+                    }
+                },
+                error: function (xhr) {
+                    $("#loadingArea").hide();
+                    $("#btnTransform").prop("disabled", false);
+                    alert("SİSTEM HATASI: Sunucuyla bağlantı kurulamadı (HTTP " + xhr.status + ").");
+                }
+            });
+        });
+    </script>
+}

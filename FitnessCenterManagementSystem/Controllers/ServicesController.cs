@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace FitnessCenterManagementSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
-
     public class ServicesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,8 +24,7 @@ namespace FitnessCenterManagementSystem.Controllers
         // GET: Services
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Services.Include(s => s.FitnessCenter);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.Services.ToListAsync());
         }
 
         // GET: Services/Details/5
@@ -38,7 +36,6 @@ namespace FitnessCenterManagementSystem.Controllers
             }
 
             var service = await _context.Services
-                .Include(s => s.FitnessCenter)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (service == null)
             {
@@ -51,7 +48,6 @@ namespace FitnessCenterManagementSystem.Controllers
         // GET: Services/Create
         public IActionResult Create()
         {
-            ViewData["FitnessCenterId"] = new SelectList(_context.FitnessCenters, "Id", "Name");
             return View();
         }
 
@@ -60,7 +56,7 @@ namespace FitnessCenterManagementSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ServiceName,Description,DurationInMinutes,Price,FitnessCenterId")] Service service)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,DurationMinutes,Price")] Service service)
         {
             if (ModelState.IsValid)
             {
@@ -68,7 +64,6 @@ namespace FitnessCenterManagementSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FitnessCenterId"] = new SelectList(_context.FitnessCenters, "Id", "Name", service.FitnessCenterId);
             return View(service);
         }
 
@@ -85,7 +80,6 @@ namespace FitnessCenterManagementSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["FitnessCenterId"] = new SelectList(_context.FitnessCenters, "Id", "Name", service.FitnessCenterId);
             return View(service);
         }
 
@@ -94,7 +88,7 @@ namespace FitnessCenterManagementSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ServiceName,Description,DurationInMinutes,Price,FitnessCenterId")] Service service)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,DurationMinutes,Price")] Service service)
         {
             if (id != service.Id)
             {
@@ -121,7 +115,6 @@ namespace FitnessCenterManagementSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FitnessCenterId"] = new SelectList(_context.FitnessCenters, "Id", "Name", service.FitnessCenterId);
             return View(service);
         }
 
@@ -134,7 +127,6 @@ namespace FitnessCenterManagementSystem.Controllers
             }
 
             var service = await _context.Services
-                .Include(s => s.FitnessCenter)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (service == null)
             {
@@ -150,14 +142,37 @@ namespace FitnessCenterManagementSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var service = await _context.Services.FindAsync(id);
-            if (service != null)
+            if (service == null) return NotFound();
+
+            // 1. KONTROL: Bu hizmete bağlı ANTRENÖR var mı?
+            bool hasTrainers = await _context.Trainers.AnyAsync(t => t.ServiceId == id);
+
+            if (hasTrainers)
             {
-                _context.Services.Remove(service);
+                // Hata mesajı ver ve silmeden sayfaya geri dön
+                ViewBag.Error = "Bu hizmeti veren antrenörler mevcut! Önce antrenörleri silmeli veya hizmetlerini değiştirmelisiniz.";
+                return View("Delete", service);
             }
 
+            // Engel yoksa sil
+            _context.Services.Remove(service);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var service = await _context.Services.FindAsync(id);
+        //    if (service != null)
+        //    {
+        //        _context.Services.Remove(service);
+        //    }
+
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool ServiceExists(int id)
         {

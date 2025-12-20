@@ -1,27 +1,34 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using NuGet.DependencyResolver;
+using System.ComponentModel.DataAnnotations;
 
 namespace FitnessCenterManagementSystem.Models
 {
     public class Appointment
     {
         public int Id { get; set; }
-        [Required]
-        public int TrainerId { get; set; }
-        public Trainer Trainer { get; set; }
-
-        public string? UserId { get; set; }
-        public ApplicationUser? User { get; set; }
 
         [Required]
+        [Display(Name = "Appointment Date")]
+        public DateTime AppointmentDate { get; set; }
+
+        [Display(Name = "Appointment Status")]
+        public string? Status { get; set; } = "Pending"; // Pending, Approved, Cancelled
+
+        // Iliskiler
+
+        // Which Service?
         public int ServiceId { get; set; }
-        public Service Service { get; set; }
+        public virtual Service? Service { get; set; }
 
-        [Required]
-        public DateTime StartAt{ get; set; }
-        [Required]
-        public DateTime EndAt { get; set; }
+        // Which trainer?
+        public int TrainerId { get; set; }
+        public virtual Trainer? Trainer { get; set; }
 
-        public bool IsConfirmed { get; set; } = false;
-        public decimal Price { get; set; }
+        //Which User? (Identity User ile baglayacak)
+        public string? MemberId { get; set; }
+        [ValidateNever]
+        public virtual IdentityUser? Member { get; set; }
     }
 }

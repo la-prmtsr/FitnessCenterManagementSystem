@@ -6,19 +6,28 @@ namespace FitnessCenterManagementSystem.Models
     {
         public int Id { get; set; }
 
-        [Required, StringLength(50)]
-        public string Name { get; set; }
-        [StringLength(50)]
-        public string? Surname { get; set; }
-        [StringLength(500)]
-        public string? Bio { get; set; }
+        [Required]
+        [Display(Name = "Fullname")]
+        public string FullName { get; set; }
 
-        public string? Specialities { get; set; }
+        [Required]
+        [Display(Name = "Expertise")]
+        public string Expertise { get; set; } // Orn: Kilo Verme, Kas Kazandırma
 
-        public int FitnessCenterId { get; set; }
-        public FitnessCenter FitnessCenter { get; set; }
+        [Display(Name = "Working Days")]
+        public string? WorkingDays { get; set; } // Null olabilir
 
-        public ICollection<TrainerAvailability> Availabilities { get; set; } = new List<TrainerAvailability>();
-        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        [Display(Name = "Start time")]
+        public TimeSpan StartTime { get; set; } // Orn: 09:00
+
+        [Display(Name = "End time")]
+        public TimeSpan EndTime { get; set; }   // Orn: 18:00
+
+        [Display(Name = "Services")]
+        public int ServiceId { get; set; }
+        public virtual Service? Service { get; set; }
+
+        //Iliski : Antrenorun randevulari
+        public ICollection<Appointment>? Appointments { get; set; }
     }
 }
