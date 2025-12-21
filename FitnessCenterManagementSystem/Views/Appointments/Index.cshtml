@@ -1,126 +1,164 @@
 ﻿@model IEnumerable<FitnessCenterManagementSystem.Models.Appointment>
 
-
 @{
-    ViewData["Title"] = "Randevularım";
+    ViewData["Title"] = "Randevular";
     bool isAdmin = User.IsInRole("Admin");
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>@(isAdmin ? "Tüm Randevular (Yönetici)" : "Randevularım")</h1>
+<div class="container py-5 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <span class="badge bg-dark text-lime mb-2 px-3 py-2 rounded-pill fw-bold" style="background-color: var(--core-dark) !important; color: var(--core-lime) !important;">
+                @(isAdmin ? "ADMIN CONTROL" : "MEMBER PANEL")
+            </span>
+            <h2 class="fw-extrabold text-dark mb-0 display-6 text-uppercase fst-italic">
+                @(isAdmin ? "Tüm Randevular" : "Randevularım")
+            </h2>
+            <p class="text-muted mb-0">Antrenman takviminizi ve randevu durumlarınızı buradan takip edin.</p>
+        </div>
 
-    @if (!isAdmin)
-    {
-        <a asp-action="Create" class="btn btn-primary btn-lg">➕ Yeni Randevu Al</a>
-    }
+        @if (!isAdmin)
+        {
+            <a asp-action="Create" class="btn btn-primary px-4 py-3 shadow-lg fw-bold rounded-pill text-uppercase ls-1">
+                <i class="bi bi-calendar-plus-fill me-2"></i> Yeni Randevu Al
+            </a>
+        }
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-5 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr class="text-uppercase small fw-extrabold text-muted ls-1">
+                            <th class="ps-4 py-3">Tarih & Saat</th>
+                            <th>Durum</th>
+                            <th>Hizmet</th>
+                            <th>Antrenör</th>
+                            @if (isAdmin)
+                            {
+                                <th>Üye (Email)</th>
+                            }
+                            <th class="pe-4 text-end">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            // --- SENİN ORİJİNAL MANTIK HESAPLAMALARIN (DOKUNULMADI) ---
+                            TimeSpan fark = item.AppointmentDate - DateTime.Now;
+                            double saatFarki = fark.TotalHours;
+                            bool isPast = fark.TotalSeconds < 0;
+                            bool onayGerekliMi = (!isPast && saatFarki > 0 && saatFarki <= 12 && item.Status != "Kesinleşti");
+
+                            string satirStyle = isPast ? "opacity: 0.6; filter: grayscale(1);" : "";
+                            string bgClass = onayGerekliMi ? "bg-warning bg-opacity-10" : "";
+                            // -------------------------------------------------------
+
+                            <tr class="@bgClass" style="@satirStyle">
+                                <td class="ps-4 py-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="calendar-icon me-3 text-center p-2 rounded-4 bg-dark text-lime shadow-sm" style="min-width: 60px; background-color: var(--core-dark) !important; color: var(--core-lime) !important;">
+                                            <div class="small fw-bold">@item.AppointmentDate.ToString("MMM")</div>
+                                            <div class="fs-4 fw-extrabold">@item.AppointmentDate.ToString("dd")</div>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold text-dark d-block">@item.AppointmentDate.ToString("HH:mm")</span>
+                                            @if (onayGerekliMi)
+                                            {
+                                                <small class="text-danger fw-bold animate__animated animate__pulse animate__infinite">
+                                                    <i class="bi bi-exclamation-triangle-fill"></i> ACİL ONAY
+                                                </small>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (isPast)
+                                    {
+                                        <span class="badge bg-secondary rounded-pill px-3 py-2">ARŞİV</span>
+                                    }
+                                    else if (item.Status == "Kesinleşti")
+                                    {
+                                        <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check2-all"></i> KESİNLEŞTİ</span>
+                                    }
+                                    else if (onayGerekliMi)
+                                    {
+                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">YANIT BEKLENİYOR</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-dark text-lime rounded-pill px-3 py-2" style="background-color: var(--core-dark) !important; color: var(--core-lime) !important;">@item.Status.ToUpper()</span>
+                                    }
+                                </td>
+                                <td><span class="fw-semibold">@item.Service.Name</span></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:30px; height:30px;">
+                                            <i class="bi bi-person-fill text-dark small"></i>
+                                        </div>
+                                        @item.Trainer.FullName
+                                    </div>
+                                </td>
+                                @if (isAdmin)
+                                {
+                                    <td class="small text-muted">@item.Member.UserName</td>
+                                }
+
+                                <td class="pe-4 text-end">
+                                    @if (isPast)
+                                    {
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark rounded-pill px-3">Detay</a>
+                                    }
+                                    else if (onayGerekliMi && !isAdmin)
+                                    {
+                                        <div class="d-flex flex-column align-items-end">
+                                            <small class="fw-bold mb-1 text-dark">Katılıyor musunuz?</small>
+                                            <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                                                <form asp-action="ConfirmAttendance" asp-route-id="@item.Id" method="post">
+                                                    <button type="submit" class="btn btn-sm btn-success px-3 border-end border-white border-opacity-25">EVET</button>
+                                                </form>
+                                                <form asp-action="CancelAttendance" asp-route-id="@item.Id" method="post">
+                                                    <button type="submit" class="btn btn-sm btn-danger px-3">HAYIR</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-dark px-3 border-end border-secondary"><i class="bi bi-info-circle"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-dark px-3 text-danger"><i class="bi bi-trash"></i></a>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-<table class="table table-hover align-middle shadow-sm">
-    <thead class="table-dark">
-        <tr>
-            <th>Tarih & Saat</th>
-            <th>Durum</th>
-            <th>Hizmet</th>
-            <th>Antrenör</th>
-            @if (isAdmin)
-            {
-                <th>Üye (Email)</th>
-            }
-            <th class="text-center">İşlemler</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            // --- MANTIK HESAPLAMALARI ---
-            TimeSpan fark = item.AppointmentDate - DateTime.Now;
-            double saatFarki = fark.TotalHours;
+<style>
+    .ls-1 {
+        letter-spacing: 1px;
+    }
 
-            // 1. Randevu geçmişte mi kalmış?
-            bool isPast = fark.TotalSeconds < 0;
+    .fw-extrabold {
+        font-weight: 800;
+    }
 
-            // 2. Kritik durum kontrolü (Sadece GELECEK randevular için geçerli)
-            bool onayGerekliMi = (!isPast && saatFarki > 0 && saatFarki <= 12 && item.Status != "Kesinleşti");
+    .table-hover tbody tr:hover {
+        background-color: rgba(0,0,0,0.02) !important;
+    }
+    /* Takvim ikonu stili */
+    .calendar-icon {
+        transition: transform 0.3s ease;
+    }
 
-            // 3. Satır Rengi Belirleme
-            string satirClass = "";
-            if (isPast)
-            {
-                satirClass = "table-secondary text-muted"; // Geçmişse GRİ ve SOLUK yap
-            }
-            else if (onayGerekliMi)
-            {
-                satirClass = "table-warning border-warning"; // Acilse SARI yap
-            }
-            // ----------------------------
-
-            <tr class="@satirClass">
-                <td>
-                    <div class="fw-bold">@item.AppointmentDate.ToString("dd.MM.yyyy")</div>
-                    <div>@item.AppointmentDate.ToString("HH:mm")</div>
-
-                    @if (onayGerekliMi)
-                    {
-                        <div class="mt-2 text-danger fw-bold small animate__animated animate__flash">
-                            <i class="bi bi-exclamation-triangle-fill"></i>
-                            @(isAdmin ? "Üye henüz onaylamadı!" : "Son 12 Saat! Durum bildiriniz.")
-                        </div>
-                    }
-                </td>
-                <td>
-                    @if (isPast)
-                    {
-                        <span class="badge bg-secondary p-2">Geçmiş / Tamamlandı</span>
-                    }
-                    else if (item.Status == "Kesinleşti")
-                    {
-                        <span class="badge bg-success p-2">✅ Kesinleşti</span>
-                    }
-                    else if (onayGerekliMi)
-                    {
-                        <span class="badge bg-warning text-dark p-2">⚠️ Yanıt Bekleniyor</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-info text-dark p-2">@item.Status</span>
-                    }
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.Service.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Trainer.FullName)</td>
-
-                @if (isAdmin)
-                {
-                    <td>@Html.DisplayFor(modelItem => item.Member.UserName)</td>
-                }
-
-                <td class="text-center">
-                    @if (isPast)
-                    {
-                        <span class="small fst-italic me-2">Arsivlendi</span>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm">Detay</a>
-                    }
-                    else if (onayGerekliMi && !isAdmin)
-                    {
-                        <span class="d-block mb-1 fw-bold text-muted small">Gidecek misiniz?</span>
-                        <div class="btn-group" role="group">
-                            <form asp-action="ConfirmAttendance" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-success btn-sm">✅ Evet</button>
-                            </form>
-                            <form asp-action="CancelAttendance" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-sm ms-1">❌ Hayır</button>
-                            </form>
-                        </div>
-                    }
-                    else
-                    {
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm">Detay</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">İptal</a>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-
-
+    tr:hover .calendar-icon {
+        transform: scale(1.1);
+    }
+</style>

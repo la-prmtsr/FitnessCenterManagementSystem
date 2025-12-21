@@ -4,6 +4,191 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
+<div class="container-fluid py-5 px-4">
+
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <span class="badge bg-dark text-lime mb-2 px-3 py-2 rounded-pill fw-bold" style="background-color: var(--core-dark) !important; color: var(--core-lime) !important;">
+                SYSTEM OVERVIEW
+            </span>
+            <h2 class="fw-extrabold text-dark mb-0 display-6 text-uppercase fst-italic">Yönetici Paneli</h2>
+            <p class="text-muted mb-0">Hoşgeldin, salonun güncel performans verileri aşağıdadır.</p>
+        </div>
+        <div class="text-end d-none d-md-block">
+            <h5 class="fw-bold mb-0 text-dark">@DateTime.Now.ToString("dd MMMM yyyy")</h5>
+            <span class="text-muted small">@DateTime.Now.ToString("dddd, HH:mm")</span>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 60px; height: 60px; background-color: var(--core-lime);">
+                            <i class="bi bi-people-fill fs-3 text-dark"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-muted small mb-0 text-uppercase fw-extrabold ls-1">Toplam Üye</p>
+                        <h2 class="fw-bold mb-0 text-dark">@Model.TotalMembers</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 60px; height: 60px; background-color: var(--core-dark);">
+                            <i class="bi bi-calendar-check-fill fs-3 text-lime" style="color: var(--core-lime);"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-muted small mb-0 text-uppercase fw-extrabold ls-1">Bugünkü Dersler</p>
+                        <h2 class="fw-bold mb-0 text-dark">@Model.TodaysAppointments</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm border" style="width: 60px; height: 60px;">
+                            <i class="bi bi-wallet2 fs-3 text-dark"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-muted small mb-0 text-uppercase fw-extrabold ls-1">Tahmini Kazanç</p>
+                        <h2 class="fw-bold mb-0 text-dark">@Model.TotalRevenue.ToString("C0")</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm" style="background-color: var(--core-lime);">
+                <div class="card-body d-flex align-items-center p-4 text-dark">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 60px; height: 60px;">
+                            <i class="bi bi-trophy-fill fs-3 text-dark"></i>
+                        </div>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-dark opacity-75 small mb-0 text-uppercase fw-extrabold ls-1">Ayın Hocası</p>
+                        <h5 class="fw-bold mb-0 text-truncate" title="@Model.TopTrainerName">
+                            @(!string.IsNullOrEmpty(Model.TopTrainerName) ? Model.TopTrainerName.ToUpper() : "—")
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-5 overflow-hidden">
+                <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-extrabold text-dark text-uppercase fst-italic">
+                        <i class="bi bi-clock-history me-2 text-lime" style="color: var(--core-lime);"></i> Yaklaşan Randevular
+                    </h5>
+                    <a asp-controller="Appointments" asp-action="Index" class="btn btn-dark btn-sm rounded-pill px-4 fw-bold">
+                        Tümünü Gör <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr class="text-uppercase small fw-extrabold text-muted ls-1">
+                                    <th class="ps-4 py-3">Tarih / Saat</th>
+                                    <th>Hizmet</th>
+                                    <th>Eğitmen</th>
+                                    <th>Üye</th>
+                                    <th class="pe-4 text-end">Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.UpcomingAppointments)
+                                {
+                                    <tr>
+                                        <td class="ps-4 fw-bold text-dark">
+                                            @item.AppointmentDate.ToString("dd MMM") <span class="text-muted fw-normal ms-1">| @item.AppointmentDate.ToString("HH:mm")</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-dark text-lime px-3 py-2 rounded-pill fw-bold small" style="background-color: var(--core-dark) !important; color: var(--core-lime) !important;">
+                                                @item.Service.Name
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light rounded-circle text-center me-2 d-flex align-items-center justify-content-center" style="width:32px; height:32px;">
+                                                    <i class="bi bi-person text-dark"></i>
+                                                </div>
+                                                <span class="fw-semibold">@item.Trainer.FullName</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-muted">@item.Member.UserName</td>
+                                        <td class="pe-4 text-end">
+                                            @if (item.Status == "Confirmed" || item.Status == "Onaylı")
+                                            {
+                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-bold">ONAYLI</span>
+                                            }
+                                            else if (item.Status == "Pending" || item.Status == "Bekliyor")
+                                            {
+                                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2 fw-bold">BEKLİYOR</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-light text-dark rounded-pill px-3 py-2 fw-bold">@item.Status.ToUpper()</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+                                @if (!Model.UpcomingAppointments.Any())
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <i class="bi bi-calendar2-x display-4 d-block mb-3 opacity-25"></i>
+                                            <p class="text-muted fw-bold">Henüz yaklaşan bir randevu kaydı bulunamadı.</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .fw-extrabold {
+        font-weight: 800;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #fcfcfc;
+    }
+</style>
+
+
+@* @model FitnessCenterManagementSystem.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
 <div class="container-fluid py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -165,4 +350,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> *@

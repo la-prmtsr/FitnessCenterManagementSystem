@@ -1,13 +1,106 @@
 ﻿@model FitnessCenterManagementSystem.Models.GymSetting
 
 @{
+    ViewData["Title"] = "Gym Settings";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 40px;">
+                <div class="card-header bg-dark py-4 px-5 border-0 d-flex align-items-center justify-content-between">
+                    <h3 class="mb-0 fw-bold" style="color: var(--core-lime);">Salon Yönetimi</h3>
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2 small fw-bold">Admin Panel</span>
+                </div>
+
+                <div class="card-body p-5 bg-white">
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4">
+                            <i class="bi bi-check-circle-fill me-2"></i> @ViewBag.Message
+                        </div>
+                    }
+
+                    <form asp-action="Edit">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label asp-for="OpenTime" class="form-label small fw-bold text-muted text-uppercase ls-1">Açılış Saati</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0 rounded-start-4"><i class="bi bi-clock"></i></span>
+                                    <input asp-for="OpenTime" class="form-control bg-light border-0 py-3 rounded-end-4 shadow-sm" type="time" />
+                                </div>
+                                <span asp-validation-for="OpenTime" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="CloseTime" class="form-label small fw-bold text-muted text-uppercase ls-1">Kapanış Saati</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0 rounded-start-4"><i class="bi bi-clock-fill"></i></span>
+                                    <input asp-for="CloseTime" class="form-control bg-light border-0 py-3 rounded-end-4 shadow-sm" type="time" />
+                                </div>
+                                <span asp-validation-for="CloseTime" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="OpenDays" class="form-label small fw-bold text-muted text-uppercase ls-1">Açık Olduğu Günler</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0 rounded-start-4"><i class="bi bi-calendar3"></i></span>
+                                    <input asp-for="OpenDays" class="form-control bg-light border-0 py-3 rounded-end-4 shadow-sm" placeholder="Monday, Tuesday, Wednesday..." />
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted d-block italic"><i class="bi bi-info-circle me-1"></i> Günleri İngilizce ve virgülle ayırarak giriniz.</small>
+                                </div>
+                                <span asp-validation-for="OpenDays" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg text-uppercase tracking-wider">
+                                <i class="bi bi-save2 me-2"></i> Ayarları Güncelle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted fw-bold small text-uppercase">
+                    <i class="bi bi-arrow-left me-1"></i> Paneli Kapat ve Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+@* @model FitnessCenterManagementSystem.Models.GymSetting
+
+@{
     ViewData["Title"] = "Salon Ayarları";
 }
 
 <div class="container mt-4">
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
-            <h3>⚙️ Spor Salonu Çalışma Ayarları</h3>
+            <h3>Spor Salonu Çalışma Ayarları</h3>
         </div>
         <div class="card-body">
 
@@ -59,4 +152,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-}
+} *@

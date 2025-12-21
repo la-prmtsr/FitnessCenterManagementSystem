@@ -1,61 +1,85 @@
 ﻿@model FitnessCenterManagementSystem.Models.Appointment
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Randevu Al";
 }
-<h1>Randevu Al</h1>
 
-<h4>Appointment</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card border-0 shadow-lg" style="border-radius: 40px; overflow: hidden;">
+                <div class="card-header bg-dark py-4 px-5 border-0 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h3 class="mb-0 fw-bold" style="color: var(--core-lime);">📅 Yeni Randevu</h3>
+                        <p class="text-white-50 small mb-0">Hemen eğitmenini seç ve antrenmana başla.</p>
+                    </div>
+                    <i class="bi bi-calendar-check fs-1" style="color: var(--core-lime);"></i>
+                </div>
 
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="alert alert-danger">
-                <strong>⚠️ Hata Oluştu:</strong>
-                <div asp-validation-summary="All" class="text-danger mb-0"></div>
+                <div class="card-body p-5 bg-white">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger border-0 rounded-4 shadow-sm mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-exclamation-octagon-fill fs-4 me-3"></i>
+                                <div>
+                                    <strong>⚠️ Hata Oluştu:</strong>
+                                    <div asp-validation-summary="All" class="small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="AppointmentDate" class="form-label small fw-bold text-muted text-uppercase ls-1">Randevu Tarihi & Saati</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 rounded-start-4"><i class="bi bi-clock"></i></span>
+                                <input asp-for="AppointmentDate" class="form-control bg-light border-0 py-3 rounded-end-4 shadow-sm" type="datetime-local" />
+                            </div>
+                            <span asp-validation-for="AppointmentDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ServiceId" class="form-label small fw-bold text-muted text-uppercase ls-1">Hizmet Seçiniz</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 rounded-start-4"><i class="bi bi-activity"></i></span>
+                                <select asp-for="ServiceId" id="ServiceId" class="form-select bg-light border-0 py-3 rounded-end-4 shadow-sm" asp-items="ViewBag.ServiceId">
+                                    <option value="">-- Önce Hizmet Seçin --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="ServiceId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-5">
+                            <label asp-for="TrainerId" class="form-label small fw-bold text-muted text-uppercase ls-1">Antrenör Seçiniz</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 rounded-start-4"><i class="bi bi-person-badge"></i></span>
+                                <select asp-for="TrainerId" id="TrainerId" class="form-select bg-light border-0 py-3 rounded-end-4 shadow-sm" disabled>
+                                    <option value="">-- Önce Hizmet Seçiniz --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="TrainerId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 rounded-pill fw-bold shadow-lg text-uppercase ls-1">
+                                <i class="bi bi-check-circle-fill me-2"></i> Randevu Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        }
 
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group mb-3">
-                <label asp-for="AppointmentDate" class="control-label">Randevu Tarihi</label>
-                <input asp-for="AppointmentDate" class="form-control" type="datetime-local" />
-                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+            <div class="text-center mt-4">
+                <a asp-action="Index" class="text-decoration-none text-muted fw-bold small text-uppercase">
+                    <i class="bi bi-arrow-left me-1"></i> Mevcut Randevularıma Dön
+                </a>
             </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="ServiceId" class="control-label">Hizmet Seçiniz</label>
-                <select asp-for="ServiceId" class="form-control" asp-items="ViewBag.ServiceId">
-                    <option value="">-- Önce Hizmet Seçin --</option>
-                </select>
-                <span asp-validation-for="ServiceId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="TrainerId" class="control-label">Antrenör Seçiniz</label>
-                <select asp-for="TrainerId" class="form-control" asp-items="ViewBag.TrainerId" disabled>
-                    <option value="">-- Önce Hizmet Seçiniz --</option>
-                </select>
-                <span asp-validation-for="TrainerId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Randevu Oluştur" class="btn btn-primary" />
-            </div>
-        </form>
-
-        <div class="mt-3">
-            <div asp-validation-summary="All" class="text-danger alert alert-light"></div>
         </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Listeye Dön</a>
 </div>
 
 @section Scripts {
@@ -63,32 +87,26 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script>
         $(document).ready(function () {
-            // Hizmet (Service) değiştiğinde çalışır
             $("#ServiceId").change(function () {
                 var serviceId = $(this).val();
                 var trainerDropdown = $("#TrainerId");
 
-                // Önce Trainer listesini temizle
                 trainerDropdown.empty();
                 trainerDropdown.append('<option value="">-- Antrenör Seçiniz --</option>');
-                trainerDropdown.prop("disabled", true); // Yüklenirken kilitle
+                trainerDropdown.prop("disabled", true);
 
                 if (serviceId) {
-                    // Controller'daki GetTrainersByService API'sine git
                     $.ajax({
                         url: '/Appointments/GetTrainersByService',
                         type: 'GET',
                         data: { serviceId: serviceId },
                         success: function (data) {
-                            // Gelen verileri döngüyle ekle
                             $.each(data, function (i, trainer) {
                                 trainerDropdown.append('<option value="' + trainer.id + '">' + trainer.fullName + '</option>');
                             });
-                            trainerDropdown.prop("disabled", false); // Kilidi aç
+                            trainerDropdown.prop("disabled", false);
                         },
                         error: function () {
                             alert("Antrenörler yüklenirken bir hata oluştu.");

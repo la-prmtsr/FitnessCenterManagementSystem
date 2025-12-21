@@ -2,6 +2,81 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Aramıza Katıl";
+    //Layout = null;
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="container-fluid vh-100 bg-white">
+    <div class="row h-100">
+        <div class="col-md-6 col-lg-7 d-none d-md-block p-3">
+            <div class="h-100 w-100 rounded-5 overflow-hidden position-relative shadow-lg">
+                <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2000"
+                     class="w-100 h-100" style="object-fit: cover;">
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-10"></div>
+                <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-75">
+                    <h2 class="display-3 fw-bolder mb-3 text-uppercase fst-italic">START YOUR <br>EVOLUTION</h2>
+                    <p class="lead fs-4 opacity-75">Bugün başla, yarın değişimi hisset.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-5 d-flex align-items-center justify-content-center">
+            <div class="w-100 p-4 p-md-5" style="max-width: 500px;">
+                <div class="mb-5">
+                    <h1 class="fw-bold text-dark">Join the <span style="color: var(--core-lime);">Class</span></h1>                    <p class="text-muted">Fitness yolculuğuna başlamak için bilgilerini gir.</p>
+                </div>
+
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Email" class="form-control border-0 bg-light rounded-4" placeholder="name@example.com" />
+                        <label asp-for="Input.Email" class="text-muted">E-posta Adresi</label>
+                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Password" class="form-control border-0 bg-light rounded-4" placeholder="password" />
+                        <label asp-for="Input.Password" class="text-muted">Şifre</label>
+                        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <input asp-for="Input.ConfirmPassword" class="form-control border-0 bg-light rounded-4" placeholder="password" />
+                        <label asp-for="Input.ConfirmPassword" class="text-muted">Şifre Tekrar</label>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <button id="registerSubmit" type="submit" class="w-100 btn btn-primary py-3 fw-bold shadow-lg">
+                        ÜCRETSİZ KAYIT OL
+                    </button>
+
+                    <div class="text-center mt-4">
+                        <p class="small text-muted">Zaten hesabın var mı?\ <a asp-page="./Login" class="text-decoration-none fw-bold border-bottom border-2" style="color: var(--core-dark); border-color: var(--core-lime) !important;">Giriş Yap</a>  ></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
+
+
+
+
+
+@* @page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Aramıza Katıl";
 }
 
 <div class="container-fluid vh-100">
@@ -61,4 +136,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+} *@

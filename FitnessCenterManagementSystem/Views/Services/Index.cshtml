@@ -1,54 +1,105 @@
 ﻿@model IEnumerable<FitnessCenterManagementSystem.Models.Service>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Services Management";
 }
 
-<h1>Index</h1>
+<div class="container py-5 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <span class="badge bg-dark text-lime mb-2 px-3 py-2 rounded-pill fw-bold" style="background-color: var(--core-dark) !important; color: var(--core-lime) !important;">
+                ADMIN ONLY
+            </span>
+            <h2 class="fw-extrabold text-dark mb-0 display-6 text-uppercase fst-italic">Hizmet Yönetimi</h2>
+            <p class="text-muted mb-0">Salonun sunduğu tüm hizmetleri buradan yönetebilir, yeni servisler ekleyebilirsiniz.</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-primary px-4 py-3 shadow-lg fw-bold rounded-pill text-uppercase ls-1">
+                <i class="bi bi-plus-circle-fill me-2"></i> Yeni Hizmet Ekle
+            </a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DurationMinutes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DurationMinutes)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="card border-0 shadow-sm rounded-5 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr class="text-uppercase small fw-extrabold text-muted ls-1">
+                            <th class="ps-4 py-3">@Html.DisplayNameFor(model => model.Name)</th>
+                            <th>Açıklama</th>
+                            <th class="text-center">Süre (Dk)</th>
+                            <th class="text-center">Ücret</th>
+                            <th class="pe-4 text-end">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 py-4">
+                                    <span class="fw-bold text-dark fs-5">@Html.DisplayFor(modelItem => item.Name)</span>
+                                </td>
+                                <td class="text-muted" style="max-width: 300px;">
+                                    <small>@Html.DisplayFor(modelItem => item.Description)</small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-bold">
+                                        <i class="bi bi-stopwatch me-1"></i> @Html.DisplayFor(modelItem => item.DurationMinutes) dk
+                                    </span>
+                                </td>
+                                <td class="text-center fw-extrabold text-dark fs-5">
+                                    @Html.DisplayFor(modelItem => item.Price) <small class="text-muted">₺</small>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-dark px-3 border-end border-secondary" title="Düzenle">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-dark px-3 border-end border-secondary" title="Detaylar">
+                                            <i class="bi bi-info-circle"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-dark px-3 text-danger" title="Sil">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="bi bi-inboxes display-1 d-block mb-3 opacity-25"></i>
+                                    <h5 class="text-muted">Henüz herhangi bir hizmet tanımlanmamış.</h5>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-controller="Admin" asp-action="Index" class="text-decoration-none text-muted fw-bold small text-uppercase">
+            <i class="bi bi-arrow-left me-1"></i> Yönetici Dashboard'a Dön
+        </a>
+    </div>
+</div>
+
+<style>
+    .ls-1 { letter-spacing: 1px; }
+    .fw-extrabold { font-weight: 800; }
+    /* Satır hover efekti */
+    .table-hover tbody tr:hover {
+        background-color: rgba(217, 255, 153, 0.05) !important;
+        transition: background-color 0.3s ease;
+    }
+    /* İşlem butonları hover efekti */
+    .btn-group .btn-dark:hover {
+        background-color: #333 !important;
+        color: var(--core-lime) !important;
+    }
+</style>

@@ -3,24 +3,20 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Fitness Center</title>
+    <title>@ViewData["Title"] - CORE36</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/FitnessCenterManagementSystem.styles.css" asp-append-version="true" />
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
 <body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top py-3 shadow-sm">
+        <nav class="navbar navbar-expand-lg sticky-top py-3">
             <div class="container">
-                <a class="navbar-brand fw-bold fs-4 text-primary" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-activity"></i> FITNESS<span class="text-dark">ZONE</span>
+                <a class="navbar-brand fw-extrabold fs-3 text-dark" asp-controller="Home" asp-action="Index">
+                    CORE <span style="color: var(--core-lime);">36</span>
                 </a>
 
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -29,19 +25,17 @@
 
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav ms-auto align-items-center gap-2">
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        @* <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li> *@
-
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                        }
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-primary fw-bold" asp-area="" asp-controller="Admin" asp-action="Index">
-                                    <i class="bi bi-bar-chart-fill"></i> Dashboard
+                                <a class="nav-link fw-bold" asp-area="" asp-controller="Admin" asp-action="Index">
+                                    <i class="bi bi-bar-chart-fill text-lime"></i> Dashboard
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -52,10 +46,10 @@
                             </li>
 
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Admin Panel 
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                                    Admin Panel
                                 </a>
-                                <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="adminDropdown">
+                                <ul class="dropdown-menu shadow border-0 rounded-4">
                                     <li><a class="dropdown-item" asp-controller="Services" asp-action="Index">Services Management</a></li>
                                     <li><a class="dropdown-item" asp-controller="Trainers" asp-action="Index">Trainers Management</a></li>
                                     <li><hr class="dropdown-divider"></li>
@@ -64,13 +58,22 @@
                             </li>
                         }
 
+                        
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" asp-controller="Ai" asp-action="Index">
+                                <i class="bi bi-robot text-lime"></i> AI Coach
+
+                            </a>
+                        </li>
+
                         @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
                         {
-                            <li class="nav-item ms-2">
-                                <a class="btn btn-primary px-4 shadow-sm rounded-pill text-white" asp-controller="Appointments" asp-action="Create">Book Now</a>
-                            </li>
+                        
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Appointments" asp-action="Index">My Appointments</a>
+                            </li>
+                            <li class="nav-item ms-2">
+                                <a class="btn btn-primary px-4 rounded-pill shadow-sm" asp-controller="Appointments" asp-action="Create">Book Now</a>
                             </li>
                         }
 
@@ -88,9 +91,9 @@
         </main>
     </div>
 
-    <footer class="bg-white py-4 mt-auto border-top">
+    <footer class="py-4 mt-auto border-top bg-white">
         <div class="container text-center">
-            <p class="mb-0 text-muted small">&copy; 2025 - <strong>Fitness Center</strong> - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></p>
+            <p class="mb-0 text-muted small">&copy; 2025 - <strong>CORE36</strong> - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></p>
         </div>
     </footer>
 
