@@ -1,43 +1,126 @@
 # Fitness Center Management System
-ASP.NET Core MVC mimarisi üzerine inşa edilmiş, spor salonları için uçtan uca randevu ve yönetim çözümüdür. Proje, bir işletmenin temel operasyonel ihtiyaçlarını dijitalleştirmeyi amaçlar.
 
-## Technical Stack
-Bu proje aşağıdaki teknolojiler ve prensipler kullanılarak geliştirilmiştir:
-### **Backend**
+Fitness Center Management System is a web-based application developed with **ASP.NET Core MVC** to manage the main operations of a fitness center.
 
-**Framework**: ASP.NET Core 8.0 MVC
+The system provides features for user authentication, appointment scheduling, trainer management, service management, dashboard overview, reporting, and AI-supported fitness recommendations.
 
-**ORM**: Entity Framework Core (Code First)
+> This project was developed as a Web Technologies course project.
 
-**Database**: MS SQL Server
+---
 
-**AI Models**: Groq Llama-3 (Text), Pollinations/Flux (Vision & Image Generation)
+## Project Overview
 
-### **Frontend**
+The main purpose of this project is to digitalize fitness center operations in a structured web application.
 
-**UI Style**: CORE 36 Modern Soft UI (Siyah-Lime Teması)
+The system allows members to register, log in, view services, and create appointments. Admin users can manage trainers, services, appointments, reports, and dashboard data.
 
-**Frameworks**: Bootstrap 5.3, jQuery, AJAX
+The project focuses on applying MVC architecture, database management, authentication, authorization, CRUD operations, and dynamic web application development using ASP.NET Core.
 
-**Icons**: Bootstrap Icons
+---
 
-## Temel Özellikler
-**1. Rol Bazlı Yönetim Paneli**
+## Technologies Used
 
-Admin: Eğitmen ekleme/silme, hizmet tanımlama ve tüm randevuları yönetme yetkisine sahiptir.
+### Backend
 
-Üye: Kendine uygun eğitmeni ve hizmeti seçerek online randevu oluşturabilir.
+- ASP.NET Core 8.0 MVC
+- Entity Framework Core
+- Microsoft SQL Server
+- ASP.NET Core Identity
+- LINQ
+- Code First Migration
 
-**2. AI Destekli Danışmanlığı**
+### Frontend
 
-Groq API entegrasyonu sayesinde üyelerin fiziksel verilerine göre kişiselleştirilmiş beslenme ve antrenman önerileri sunar.
+- HTML5
+- CSS3
+- Bootstrap 5
+- JavaScript
+- jQuery
+- AJAX
+- Bootstrap Icons
 
-Görüntü işleme modelleri ile fotoğraf üzerinden analiz yapabilme altyapısına sahiptir.
+### AI Integration
 
-**3. Dashboard ve Analiz**
+- Groq Llama-3 API
+- AI-supported fitness and nutrition recommendation feature
 
-Salonun toplam üye sayısı, günlük randevu yoğunluğu ve tahmini kazanç gibi kritik veriler admin panelinde görselleştirilir.
+---
 
-**4. RESTful API Servisleri**
+## Main Features
 
-Raporlama işlemleri için LINQ sorguları ile optimize edilmiş API endpoint'leri barındırır.
+### User Authentication
+
+The system includes user registration and login functionality using ASP.NET Core Identity.
+
+Users can create accounts and access the system according to their role.
+
+### Role-Based Access
+
+The project supports different user roles.
+
+Admin users can manage system data, while members can use appointment and fitness-related features.
+
+### Appointment Management
+
+Members can create and manage fitness appointments through the system.
+
+Admins can view and manage appointment records.
+
+### Trainer Management
+
+Admin users can add, update, view, and delete trainer information.
+
+This helps the fitness center keep trainer records organized.
+
+### Service Management
+
+Fitness services can be managed by admin users.
+
+Service information such as service name, price, and related details can be stored and updated.
+
+### Dashboard
+
+The dashboard provides a general overview of the system.
+
+It helps admins monitor important information such as members, appointments, services, and system activity.
+
+### Reports
+
+The reporting section supports system tracking and helps admins review important fitness center data.
+
+### AI-Supported Recommendation
+
+The project includes an AI-supported recommendation feature.
+
+This feature provides fitness and nutrition suggestions based on user input.  
+It is included as an additional module, while the main focus of the project remains fitness center management.
+
+---
+
+## Website's Screenshots
+
+### Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Appointment Management
+
+![Appointment Management](docs/screenshots/appointments.png)
+
+### Trainer Management
+
+![Trainer Management](docs/screenshots/trainers.png)
+
+### Service Management
+
+![Service Management](docs/screenshots/services.png)
+
+### Reports Page (API)
+
+![Reports Page](docs/screenshots/reports.png)
+
+### AI Coach
+
+![AI Coach](docs/screenshots/ai-coach.png)
+
+---
